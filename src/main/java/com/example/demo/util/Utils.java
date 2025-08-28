@@ -1,8 +1,16 @@
 package com.example.demo.util;
 
 import com.google.common.base.CaseFormat;
+import com.google.common.collect.Sets;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 
+import java.beans.PropertyDescriptor;
 import java.util.Objects;
+import java.util.Set;
+
+import static java.util.Collections.emptySet;
 
 public class Utils {
     @FunctionalInterface
@@ -21,5 +29,33 @@ public class Utils {
 
     public static String camel2underscore(String text) {
         return Objects.isNull(text) ? null : CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, text);
+    }
+
+    public static <T> T copyNn(Object src, T target, String... ignoredFields) {
+        copyProperties(src, target, emptySet(), ignoredFields);
+        return target;
+    }
+
+    public static void copyNonNullProperties(Object src, Object target, String... ignoredFields) {
+        copyProperties(src, target, emptySet(), ignoredFields);
+    }
+
+    public static void copyProperties(Object src, Object target, Set<String> mustCopyFields, String... ignoredFields) {
+        if (Objects.isNull(src)) return;
+        BeanWrapper wrappedSrc = new BeanWrapperImpl(src);
+        PropertyDescriptor[] propertyDescriptors = wrappedSrc.getPropertyDescriptors();
+        Set<String> emptyNames = Sets.newHashSet(ignoredFields);
+        for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
+            Object srcValue = null;
+            if (emptyNames.contains(propertyDescriptor.getName())) continue;
+            try {
+                srcValue = wrappedSrc.getPropertyValue(propertyDescriptor.getName());
+            } catch (Exception ignored) {
+            }
+            if (srcValue == null) emptyNames.add(propertyDescriptor.getName());
+        }
+        emptyNames.removeAll(mustCopyFields);
+        String[] result = new String[emptyNames.size()];
+        BeanUtils.copyProperties(src, target, emptyNames.toArray(result));
     }
 }

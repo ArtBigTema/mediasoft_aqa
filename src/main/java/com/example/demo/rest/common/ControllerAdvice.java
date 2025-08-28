@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
-@RestControllerAdvice("ru.emias.mcc.application.rest")
+@RestControllerAdvice("com.example.demo.rest")
 public class ControllerAdvice {
     @Value("${logging.local:true}")
     Boolean logLocal;

@@ -9,6 +9,11 @@ import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,11 +46,10 @@ public class ReadableController<E extends AbstractEntity> {
             @Parameter(schema = @Schema(type = "string"), name = "searchString"),
             @Parameter(schema = @Schema(type = "string"), name = "sort", example = "id,desc")
     })
-    public PositiveResponse<List<E>> getAll(//@SortDefault(sort = id, direction = Sort.Direction.DESC)
-                                            // @Parameter(hidden = true) @PageableDefault Pageable pageable,
+    public PositiveResponse<List<E>> getAll(@SortDefault(sort = "id", direction = Sort.Direction.DESC)
+                                             @Parameter(hidden = true) @PageableDefault Pageable pageable,
                                             @RequestParam(required = false) Map<String, Object> params) {
-//        Page<E> all = crudService.findAll(clazz, params, pageable);
-        return Api.positiveResponse(Collections.emptyList());
+        return Api.positiveResponse(crudService.findAll(clazz, params, pageable));
     }
 
 

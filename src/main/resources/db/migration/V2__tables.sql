@@ -18,7 +18,7 @@ CREATE table if not exists product (
 );
 CREATE table if not exists "order" (
     id UUID PRIMARY KEY,
-    customer_id BIGINT,
+    customer_id UUID,
     status VARCHAR(10),
     delivery_address VARCHAR(255)
 );

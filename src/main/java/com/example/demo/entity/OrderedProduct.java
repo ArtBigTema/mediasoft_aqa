@@ -4,12 +4,14 @@ import jakarta.persistence.Entity;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.experimental.FieldNameConstants;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
 @Data
 @Entity
+@FieldNameConstants
 @EqualsAndHashCode(callSuper = true)
 public class OrderedProduct extends AbstractEntity {
     @NotNull

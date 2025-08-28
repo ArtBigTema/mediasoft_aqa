@@ -19,7 +19,7 @@ public class UpdateController<E extends AbstractEntity> extends ReadableControll
 
     @PatchMapping("{id}")
     public PositiveResponse<UUID> update(@PathVariable UUID id, @RequestBody E body) {
-        E updated = crudService.update(id, body);
+        E updated = crudService.update(id, getClazz(), body);
         return Api.positiveResponse(updated.getId());
     }
 
