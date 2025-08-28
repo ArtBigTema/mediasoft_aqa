@@ -1,7 +1,6 @@
 package com.example.demo.rest;
 
 import com.example.demo.util.Utils;
-import com.google.common.collect.ImmutableMap;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.BooleanUtils;
@@ -73,6 +72,6 @@ public class CommonController {
             sb.append(";");
         }
         sb.append(" }");
-        return ImmutableMap.of("class", sb.toString());
+        return Map.of("class", sb.toString());
     }
 }
