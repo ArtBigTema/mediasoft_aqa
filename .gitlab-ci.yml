@@ -1,0 +1,12 @@
+test:
+  stage: test
+  image: maven
+  variables:
+    ALLURE_ENDPOINT: https://testops.example.com
+    ALLURE_PROJECT_ID: 1
+    ALLURE_RESULTS: build/allure-results
+  before_script:
+    - curl -fsSL https://github.com/allure-framework/allurectl/releases/latest/download/allurectl_linux_amd64 -o allurectl
+    - chmod +x allurectl
+  script:
+    - ./allurectl watch -- maven clean build test
