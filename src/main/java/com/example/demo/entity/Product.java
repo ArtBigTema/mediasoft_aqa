@@ -7,6 +7,8 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
+import lombok.experimental.FieldNameConstants;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -17,6 +19,8 @@ import static com.fasterxml.jackson.annotation.JsonProperty.Access.READ_ONLY;
 
 @Data
 @Entity
+@FieldNameConstants
+@Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
 public class Product extends AbstractEntity {
     @CreationTimestamp

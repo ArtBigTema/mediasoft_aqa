@@ -13,7 +13,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 @Getter
 @RequiredArgsConstructor
 public enum Errors {
-    E103(500, "Сущность %s с идентификатом %s не найдена"),
+    E404(404, "Сущность %s с идентификатом %s не найдена"),
     E105(500, "Запись с идентификатором '%s' удалена"),
     E731(500, "Удаление запрещено"),
     E401(401, "Необходимо авторизоваться"),
@@ -28,6 +28,10 @@ public enum Errors {
 
     public String getCustomCode() {
         return StringUtils.substring(this.name(), NumberUtils.INTEGER_ONE);
+    }
+
+    public String toRegexp() {
+        return "^" + StringUtils.replace(getDescription(), "%s", "\\S+") + "$";
     }
 
     public CodifiedException thr(Object... args) {

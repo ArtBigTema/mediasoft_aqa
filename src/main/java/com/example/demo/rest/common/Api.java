@@ -5,7 +5,7 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 
 public class Api {
-    private static final String DESCRIPTION = "Данные получены";
+    public static final String DESCRIPTION = "Данные получены";
 
     public static <T> PositiveResponse<T> positiveResponse(T data) {
         if (data instanceof Iterable<?> iterable) {

@@ -23,7 +23,7 @@ public class AnyConfig {
     }
 
     @Bean
-    public ObjectMapper objectMapper() {
+    public static ObjectMapper objectMapper() {
         return JsonMapper.builder().addModule(new Jdk8Module())
                 .addModule(new JavaTimeModule()).configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
                 .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false).configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)

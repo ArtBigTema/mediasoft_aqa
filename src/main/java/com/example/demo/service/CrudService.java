@@ -32,7 +32,7 @@ public class CrudService {
 
     public <E extends AbstractEntity> E find(Class<E> clazz, UUID id) {
         return clazz.cast(repositories.get(clazz).findById(id)
-                .orElseThrow(() -> Errors.E103.thr(clazz.getSimpleName(), id)));
+                .orElseThrow(() -> Errors.E404.thr(clazz.getSimpleName(), id)));
     }
 
     public <E extends AbstractEntity> E update(UUID id, Class<E> clazz, E body) {
@@ -43,7 +43,7 @@ public class CrudService {
 
     public <E extends AbstractEntity> void delete(UUID id, Class<E> clazz) {
         AbstractRepo<E> repository = getRepository(clazz);
-        Errors.E113.thr(repository.existsById(id));
+        Errors.E404.thr(repository.existsById(id), clazz.getSimpleName(), id);
         repository.deleteById(id);
     }
 

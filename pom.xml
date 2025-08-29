@@ -20,6 +20,7 @@
 
         <springdoc.version>2.8.11</springdoc.version>
         <commons-collections4.version>4.5.0</commons-collections4.version>
+        <easy-random.version>5.0.0</easy-random.version>
         <guava.version>33.4.8-jre</guava.version>
         <allure-maven.version>2.15.2</allure-maven.version>
         <allure-junit5.version>2.29.1</allure-junit5.version>
@@ -115,7 +116,6 @@
             <artifactId>guava</artifactId>
             <version>${guava.version}</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-collections4 -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
@@ -125,6 +125,12 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
+        <dependency>
+        <groupId>org.jeasy</groupId>
+        <artifactId>easy-random-core</artifactId>
+            <version>${easy-random.version}</version>
+            <scope>test</scope>
+    </dependency>
     </dependencies>
 
     <build>

@@ -2,6 +2,7 @@ package com.example.demo.util;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.Sets;
+import lombok.experimental.UtilityClass;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
@@ -12,6 +13,7 @@ import java.util.Set;
 
 import static java.util.Collections.emptySet;
 
+@UtilityClass
 public class Utils {
     @FunctionalInterface
     public interface Supplier<T, E extends Throwable> {
@@ -21,6 +23,14 @@ public class Utils {
     @FunctionalInterface
     public interface Runnable<E extends Throwable> {
         void run() throws E;
+    }
+
+    public static <T> T safetyTake(Supplier<T, Exception> getter) {
+        try {
+            return getter.get();
+        } catch (Throwable e) {
+            return null;
+        }
     }
 
     public static String underscore2camel(String text) {
