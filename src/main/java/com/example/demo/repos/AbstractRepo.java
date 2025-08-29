@@ -16,7 +16,7 @@ public interface AbstractRepo<E extends AbstractEntity> extends CrudRepository<E
         PagingAndSortingRepository<E, UUID>, QueryByExampleExecutor<E> {
     Class<E> getClazz();
 
-        default Page<E> findAllByExample(Example<E> example, Pageable pageable) {
+    default Page<E> findAllByExample(Example<E> example, Pageable pageable) {
         return findAll(example, pageable);
     }
 }

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Transient;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
@@ -27,6 +28,11 @@ public abstract class AbstractEntity implements Serializable {
     @Transient
     @JsonIgnore
     protected Map<String, Object> map = new HashMap<>();
+
+    @PrePersist
+    private void pre() {
+        id = UUID.randomUUID();
+    }
 
     /**
      * Сеттер для мапы с новыми значениями.

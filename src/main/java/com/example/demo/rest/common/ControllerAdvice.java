@@ -14,11 +14,14 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static org.apache.commons.lang3.StringUtils.SPACE;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -51,6 +54,11 @@ public class ControllerAdvice {
         return build(Errors.E500, t, Errors.E500.getDescription() + t.getMessage());
     }
 
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public Object handleException(MethodArgumentTypeMismatchException t) {
+        return build(Errors.E700, t, Errors.E700.getDescription() + t.getMessage());
+    }
+
     @ExceptionHandler(Errors.CodifiedException.class)
     public Object handleException(Errors.CodifiedException t) {
         return build(t.getError(), t, t.getMessage());
@@ -59,9 +67,9 @@ public class ControllerAdvice {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Object handleException(MethodArgumentNotValidException t) {
         FieldError error = t.getBindingResult().getFieldError();
-        return build(Errors.E101, t,
-                String.format(Errors.E101.getDescription(),
-                        Objects.requireNonNull(error).getField()));
+        String msg = error.getDefaultMessage();
+        return build(Errors.E101, t, "Поле " +
+                Objects.requireNonNull(error).getField() + SPACE + msg);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)

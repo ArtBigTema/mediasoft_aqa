@@ -42,7 +42,9 @@ public class CrudService {
     }
 
     public <E extends AbstractEntity> void delete(UUID id, Class<E> clazz) {
-        getRepository(clazz).deleteById(id);
+        AbstractRepo<E> repository = getRepository(clazz);
+        Errors.E113.thr(repository.existsById(id));
+        repository.deleteById(id);
     }
 
     public <E extends AbstractEntity> E save(Class<E> clazz, E body) {

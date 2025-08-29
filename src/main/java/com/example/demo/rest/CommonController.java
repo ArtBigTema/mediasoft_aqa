@@ -1,6 +1,7 @@
 package com.example.demo.rest;
 
 import com.example.demo.util.Utils;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.BooleanUtils;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Map;
 
+@Hidden
 @RestController
 @RequiredArgsConstructor
 public class CommonController {
@@ -28,7 +30,7 @@ public class CommonController {
         List<Triple<Object, Object, Object>> collect = maps.stream().map(s -> Triple.of(s.get("column_name"), s.get("data_type"), s.get("is_nullable")))
                 .toList();
         sb.append("import jakarta.validation.constraints.NotNull; " + "import lombok.Data; " +
-                        "import lombok.EqualsAndHashCode; " + " import jakarta.persistence.Entity; import ru.emias.mcc.domain.entity.core.IdentityEntity; " +
+                        "import lombok.EqualsAndHashCode; " + " import jakarta.persistence.Entity;  " +
                         " " + "import java.time.LocalDateTime; " +
                         " @Data @Entity @EqualsAndHashCode(callSuper = true) ").append("public class ").append(StringUtils.capitalize(Utils.underscore2camel(table)))
                 .append(" extends AbstractEntity { ").append("   ");

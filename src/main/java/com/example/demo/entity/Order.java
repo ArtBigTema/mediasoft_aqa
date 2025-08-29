@@ -2,6 +2,9 @@ package com.example.demo.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -19,16 +22,20 @@ import static com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY;
 public class Order extends AbstractEntity {
     @JsonProperty(access = READ_ONLY)
     private String status;
-    @JsonProperty(access = READ_ONLY)
+    @NotNull
     private UUID customerId;
+    @NotBlank
     private String deliveryAddress;
+    @NotEmpty
     @Transient
     @JsonProperty(access = WRITE_ONLY)
     private List<Products> products;
 
     @OneToMany
     @JoinColumn(name = orderId)
+    @JsonProperty(access = READ_ONLY)
     private List<OrderedProduct> orderedProducts;
 
-    record Products(UUID id, int qty){}
+    record Products(UUID id, int qty) {
+    }
 }
