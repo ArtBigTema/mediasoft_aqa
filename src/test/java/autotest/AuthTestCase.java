@@ -5,6 +5,8 @@ import com.example.demo.config.AnyConfig;
 import com.example.demo.rest.common.Errors;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.RestAssured;
+import io.restassured.config.ObjectMapperConfig;
+import io.restassured.config.RestAssuredConfig;
 import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.http.ContentType;
@@ -33,11 +35,14 @@ public abstract class AuthTestCase {
     public static String cookie = "";
     public static final ObjectMapper mapper = AnyConfig.objectMapper();
 
+
     @BeforeAll
     public static void auth() {
         get(BASE_URL + "actuator/health")
                 .body("status", Matchers.equalTo(Status.UP.getCode()));
         RestAssured.filters(new RequestLoggingFilter(), new ResponseLoggingFilter());
+        RestAssured.config = RestAssuredConfig.config().objectMapperConfig(
+                new ObjectMapperConfig().jackson2ObjectMapperFactory((cls, charset) -> mapper));
     }
 
     /**
@@ -59,6 +64,16 @@ public abstract class AuthTestCase {
      */
     public static ValidatableResponse getWithParams(String url, Map<String, Object> params) {
         return execute(url, 200, Method.GET, params, Function.identity());
+    }
+
+    public static ValidatableResponse getWithError(String url, Map<String, Object> params, Errors errors) {
+        return execute(url, errors.getCode(), Method.GET, params, Function.identity())
+                .body(Constant.RESULT_FIELD, equalTo(Boolean.FALSE))
+                .body(Constant.CODE_FIELD, equalTo(errors.name().substring(INTEGER_ONE)))
+                .body(Constant.MESSAGE_FIELD, Matchers.anyOf(
+                        Matchers.matchesRegex(errors.toRegexp()),
+                        containsString(errors.getDescription()))
+                );
     }
 
     /**

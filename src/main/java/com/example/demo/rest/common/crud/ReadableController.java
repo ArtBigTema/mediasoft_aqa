@@ -4,6 +4,7 @@ import com.example.demo.entity.AbstractEntity;
 import com.example.demo.rest.common.Api;
 import com.example.demo.rest.common.PositiveResponse;
 import com.example.demo.service.CrudService;
+import com.example.demo.util.Utils;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -46,6 +47,7 @@ public class ReadableController<E extends AbstractEntity> {
     public PositiveResponse<List<E>> getAll(@SortDefault(sort = "id", direction = Sort.Direction.DESC)
                                             @Parameter(hidden = true) @PageableDefault Pageable pageable,
                                             @RequestParam(required = false) Map<String, Object> params) {
+        Utils.validateParams(getClazz(), params, pageable);
         return Api.positiveResponse(crudService.findAll(clazz, params, pageable));
     }
 

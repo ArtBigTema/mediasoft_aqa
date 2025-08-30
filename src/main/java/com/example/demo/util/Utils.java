@@ -1,20 +1,54 @@
 package com.example.demo.util;
 
+import com.example.demo.entity.AbstractEntity;
+import com.example.demo.rest.common.Errors;
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.Sets;
 import lombok.experimental.UtilityClass;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static java.util.Collections.emptySet;
 
 @UtilityClass
 public class Utils {
+    public static final String PAGE_PARAMETER = "page";
+    public static final String SIZE_PARAMETER = "size";
+    public static final String SORT_PARAMETER = "sort";
+    public static final Map<String , Predicate<Object>> pageableChecker = Map.of(
+            PAGE_PARAMETER, m-> NumberUtils.createInteger(m.toString())>=NumberUtils.INTEGER_ZERO,
+            SIZE_PARAMETER, m-> NumberUtils.createInteger(m.toString())>=NumberUtils.INTEGER_ONE,
+            SORT_PARAMETER, Objects::nonNull
+    );
+
+    public static <E extends AbstractEntity> void validateParams(Class<E> clazz, Map<String, Object> params, Pageable pageable) {
+        Set<String> fields = Arrays.stream(FieldUtils.getAllFields(clazz))
+                .map(Field::getName).collect(Collectors.toSet());
+
+        for (String key : params.keySet()) {
+            Predicate<Object> checker = pageableChecker.getOrDefault(key, p -> fields.contains(key));
+            Errors.E700.thr(checker.test(params.get(key))); // todo more information?
+        }
+        for (Sort.Order order : pageable.getSort()) {
+            Errors.E700.thr(fields.contains(order.getProperty()));
+        }
+        params.keySet().removeIf(pageableChecker.keySet()::contains);
+    }
+
     @FunctionalInterface
     public interface Supplier<T, E extends Throwable> {
         T get() throws E;
