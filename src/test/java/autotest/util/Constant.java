@@ -17,6 +17,7 @@ public class Constant {
     public static final String RESULT_FIELD = "result";
     public static final String MESSAGE_FIELD = "message";
     public static final String DATA_FIELD = "data";
+    public static final String ID_DATA_FIELD = "data.id";
     public static final String CODE_FIELD = "code";
     public static final String MAP_FIELD = "map";
     public static final Long MAX_TIMEOUT = 2_000L;

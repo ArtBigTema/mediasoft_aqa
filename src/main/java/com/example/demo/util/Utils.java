@@ -32,7 +32,8 @@ public class Utils {
     public static final Map<String , Predicate<Object>> pageableChecker = Map.of(
             PAGE_PARAMETER, m-> NumberUtils.createInteger(m.toString())>=NumberUtils.INTEGER_ZERO,
             SIZE_PARAMETER, m-> NumberUtils.createInteger(m.toString())>=NumberUtils.INTEGER_ONE,
-            SORT_PARAMETER, Objects::nonNull
+            SORT_PARAMETER, Objects::nonNull,
+            AbstractEntity.Fields.map, m->Boolean.TRUE
     );
 
     public static <E extends AbstractEntity> void validateParams(Class<E> clazz, Map<String, Object> params, Pageable pageable) {

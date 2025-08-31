@@ -24,8 +24,8 @@ public class CrudController<E extends AbstractEntity> extends UpdateController<E
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     // @PreAuthorize("hasAnyRole('Администратор') || hasPermission(#this.this.clazz, #body)")
-    public PositiveResponse<UUID> create(@RequestBody @Valid E body) {
+    public PositiveResponse<E> create(@RequestBody @Valid E body) {
         E saved = crudService.save(getClazz(), body);
-        return Api.positiveResponse(saved.getId());
+        return Api.positiveResponse(saved);
     }
 }

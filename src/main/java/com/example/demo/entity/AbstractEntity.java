@@ -8,7 +8,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Transient;
+import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.FieldNameConstants;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
@@ -18,10 +21,13 @@ import java.util.UUID;
 
 import static com.fasterxml.jackson.annotation.JsonProperty.Access.READ_ONLY;
 
+@Data
 @MappedSuperclass
+@FieldNameConstants
 public abstract class AbstractEntity implements Serializable {
     @Id
     @Getter
+    @Setter
     @JsonProperty(access = READ_ONLY)
     UUID id;
 
@@ -31,7 +37,7 @@ public abstract class AbstractEntity implements Serializable {
 
     @PrePersist
     private void pre() {
-        id = UUID.randomUUID();
+        id = UUID.randomUUID(); // todo generate by seq
     }
 
     /**

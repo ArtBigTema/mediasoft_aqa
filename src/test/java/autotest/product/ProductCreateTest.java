@@ -15,13 +15,17 @@ import static autotest.util.Endpoints.PRODUCT_ENDPOINT;
 public class ProductCreateTest extends AuthTestCase {
 
     public static Object createProduct() {
-        return createProductWithCategory(AUTO_TEST_CATEGORY);
+        return createAndSaveProductWithCategory(AUTO_TEST_CATEGORY);
+    }
+
+    @Step("save created random product")
+    public static Object createAndSaveProductWithCategory(String category) {
+        return post(PRODUCT_ENDPOINT, createProductWithCategory(category))
+                .extract().body().path(Constant.ID_DATA_FIELD);
     }
 
     @Step("create random product")
-    public static Object createProductWithCategory(String category) {
-        Product product = Random.getInstance().nextObject(Product.class);
-        return post(PRODUCT_ENDPOINT, product.setCategory(category))
-                .extract().body().path(Constant.DATA_FIELD);
+    public static Product createProductWithCategory(String category) {
+        return Random.getInstance().nextObject(Product.class).setCategory(category);
     }
 }

@@ -4,13 +4,18 @@ package autotest.util;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
+import org.jeasy.random.randomizers.AbstractRandomizer;
 import org.jeasy.random.randomizers.range.BigDecimalRangeRandomizer;
 import org.jeasy.random.randomizers.range.DoubleRangeRandomizer;
 import org.jeasy.random.randomizers.range.IntegerRangeRandomizer;
 import org.jeasy.random.randomizers.range.LongRangeRandomizer;
+import org.jeasy.random.randomizers.text.StringRandomizer;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
+import java.util.Set;
+import java.util.UUID;
 
 public class Random {
     // Статическое поле для хранения единственного экземпляра
@@ -18,6 +23,7 @@ public class Random {
 
     public static synchronized EasyRandom getInstance() {
         if (instance == null) {
+            Set<Class<?>> skipTypes = Set.of(LocalDateTime.class, UUID.class);
             // Настройка параметров
             EasyRandomParameters parameters = new EasyRandomParameters()
                     .randomizationDepth(3)
@@ -28,7 +34,14 @@ public class Random {
                     ))
                     .randomize(Long.class, new LongRangeRandomizer(1L, 100_000L))
                     .randomize(Double.class, new DoubleRangeRandomizer(1., 10.))
-                    .randomize(Integer.class, new IntegerRangeRandomizer(1, 1000));
+                    .randomize(Integer.class, new IntegerRangeRandomizer(1, 1000))
+                    .randomize(String.class, new AbstractRandomizer<String >(){
+                        @Override
+                        public String getRandomValue() {
+                            return "";
+                        }
+                    })
+                    .excludeField(f-> skipTypes.contains(f.getType()));
 
             instance = new EasyRandom(parameters);
         }

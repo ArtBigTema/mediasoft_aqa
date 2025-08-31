@@ -4,6 +4,7 @@ import com.example.demo.entity.AbstractEntity;
 import com.example.demo.repos.AbstractRepo;
 import com.example.demo.rest.common.Errors;
 import com.example.demo.util.Utils;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -25,7 +26,7 @@ public class CrudService {
             .withIgnoreCase().withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
 
     public CrudService(ObjectMapper mapper, List<AbstractRepo<? extends AbstractEntity>> repositories) {
-        this.mapper = mapper;
+        this.mapper = mapper.copy().disable(MapperFeature.USE_ANNOTATIONS);
         this.repositories = repositories.stream()
                 .collect(Collectors.toMap(AbstractRepo::getClazz, Function.identity()));
     }
@@ -48,7 +49,9 @@ public class CrudService {
     }
 
     public <E extends AbstractEntity> E save(Class<E> clazz, E body) {
-        return getRepository(clazz).save(body);
+        E saved = getRepository(clazz).save(body);
+        saved.getMap().clear();
+        return saved;
     }
 
     public <E extends AbstractEntity> Page<E> findAll(Class<E> clazz, Map<String, Object> params, Pageable pageable) {

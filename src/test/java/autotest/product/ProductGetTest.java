@@ -7,37 +7,39 @@ import com.example.demo.rest.common.Api;
 import com.example.demo.rest.common.Errors;
 import com.example.demo.util.Utils;
 import com.fasterxml.jackson.databind.type.CollectionLikeType;
+import com.google.common.collect.Maps;
 import io.qameta.allure.Allure;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.*;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static autotest.product.ProductCreateTest.createProduct;
+import static autotest.product.ProductCreateTest.createProductWithCategory;
 import static autotest.util.Constant.*;
 import static autotest.util.Endpoints.PRODUCT_ENDPOINT;
 import static com.example.demo.util.Utils.*;
 import static java.math.BigInteger.TEN;
 import static org.apache.commons.lang3.math.NumberUtils.*;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
+import static org.apache.http.HttpStatus.SC_OK;
+import static org.hamcrest.Matchers.*;
 
+@SuppressWarnings("unchecked")
 @Tags({@Tag("Product"), @Tag("get")})
 public class ProductGetTest extends AuthTestCase {
     public static List<Object> ids = Collections.emptyList();
     public static final int FIVE = TEN.intValue() / INTEGER_TWO;
     public static final CollectionLikeType productListType = mapper
             .getTypeFactory().constructCollectionLikeType(ArrayList.class, Product.class);
-    public static final Map<Class<?>, Comparator<Comparable<Object>>> CUSTOM_COMPARABLE = Map.of(
-            String.class, (o1, o2) -> StringUtils.compareIgnoreCase(o1.toString(), o2.toString())
-    );
 
     //    @BeforeAll
     public static void createProducts() {
@@ -67,7 +69,7 @@ public class ProductGetTest extends AuthTestCase {
                 Utils.SIZE_PARAMETER, INTEGER_ZERO,
                 Utils.SIZE_PARAMETER, INTEGER_MINUS_ONE,
                 PAGE_PARAMETER, INTEGER_MINUS_ONE,
-                SORT_PARAMETER, RandomStringUtils.secure().nextAlphabetic(INTEGER_TWO)
+                SORT_PARAMETER, RandomStringUtils.insecure().nextAlphabetic(INTEGER_TWO)
         );
 
         for (int i = INTEGER_ZERO; i < list.size(); i += INTEGER_TWO) {
@@ -119,15 +121,16 @@ public class ProductGetTest extends AuthTestCase {
     }
 
     @Test
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings("rawtypes")
+    @Tag("sorting")
     @DisplayName("Простое получение данных о продуктах с сортировкой по каждому полю")
     public void testSimpleGetAllProductsBySort() {
         Set<String> fields = Arrays.stream(FieldUtils.getAllFields(Product.class))
                 .map(Field::getName).collect(Collectors.toSet());
         fields.remove(MAP_FIELD);
 
-        for (String field : fields) {
-            for (Sort.Direction direction : Sort.Direction.values()) {
+        for (Sort.Direction direction : Sort.Direction.values()) {
+            for (String field : fields) {
                 Allure.step("check sort by " + field + " " + direction);
 
                 Comparator<Map> comparing = mapComparator(field);
@@ -136,13 +139,40 @@ public class ProductGetTest extends AuthTestCase {
                 }
 
                 List<Map> maps = getWithParams(PRODUCT_ENDPOINT,
-                        Map.of(SIZE_PARAMETER, FIVE, SORT_PARAMETER, field + "," + direction
-                        )).extract().jsonPath().getList(DATA_FIELD, Map.class);
+                        Map.of(SIZE_PARAMETER, FIVE, SORT_PARAMETER, field + "," + direction)
+                ).extract().jsonPath().getList(DATA_FIELD, Map.class);
 
                 List<Map> sorted = maps.stream().sorted(comparing).toList();
                 Assertions.assertIterableEquals(maps, sorted);
             }
         }
+    }
+
+    @Test
+    @Tag("filtering")
+    @DisplayName("Простое получение данных о продуктах с сортировкой по каждому полю")
+    public void testSimpleGetAllProductsByFilter() {
+        Product product = createProductWithCategory(AUTO_TEST_CATEGORY);
+        Map response =  MapUtils.getMap(post(PRODUCT_ENDPOINT, product)
+                .extract().body().as(Map.class), DATA_FIELD);
+        Map map = getWithParams(PRODUCT_ENDPOINT, response)
+                .extract().jsonPath().getList(DATA_FIELD, Map.class).getFirst();
+
+        Allure.step("check filter by all fields");
+        Assertions.assertIterableEquals( // не понятно почему в первом Double, во втором Float
+                Maps.transformValues(response, String::valueOf).entrySet(),
+                Maps.transformValues(map, String::valueOf).entrySet()
+        );
+        for (Object key : response.keySet()) {
+             map = Map.of(key, response.get(key));
+
+            Allure.step("check filter by single field and full value: "+map);
+            getWithParams(PRODUCT_ENDPOINT, map)
+                    .body(DATA_FIELD, Matchers.iterableWithSize(greaterThanOrEqualTo(INTEGER_ONE)))
+                    .body("pagingResults.totalCount", greaterThanOrEqualTo(INTEGER_ONE))
+                    .body("data", hasItem(hasEntry("id", response.get("id"))));
+        }
+        delete(PRODUCT_ENDPOINT+response.get("id"), SC_OK);
     }
 
 }

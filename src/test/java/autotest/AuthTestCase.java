@@ -3,6 +3,8 @@ package autotest;
 import autotest.util.Constant;
 import com.example.demo.config.AnyConfig;
 import com.example.demo.rest.common.Errors;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.RestAssured;
 import io.restassured.config.ObjectMapperConfig;
@@ -11,6 +13,7 @@ import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.http.ContentType;
 import io.restassured.http.Method;
+import io.restassured.internal.mapping.Jackson2Mapper;
 import io.restassured.response.ValidatableResponse;
 import io.restassured.specification.RequestSpecification;
 import org.apache.commons.lang3.StringUtils;
@@ -33,8 +36,10 @@ import static org.springframework.http.HttpHeaders.COOKIE;
 
 public abstract class AuthTestCase {
     public static String cookie = "";
-    public static final ObjectMapper mapper = AnyConfig.objectMapper();
-
+    public static Jackson2Mapper jacksonMapper;
+    public static final ObjectMapper mapper = AnyConfig.objectMapper()
+        .copy().disable(MapperFeature.USE_ANNOTATIONS);
+          //  .enable(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS);
 
     @BeforeAll
     public static void auth() {
@@ -43,6 +48,8 @@ public abstract class AuthTestCase {
         RestAssured.filters(new RequestLoggingFilter(), new ResponseLoggingFilter());
         RestAssured.config = RestAssuredConfig.config().objectMapperConfig(
                 new ObjectMapperConfig().jackson2ObjectMapperFactory((cls, charset) -> mapper));
+//        jacksonMapper=  new Jackson2Mapper(RestAssured.config.getObjectMapperConfig()
+//                .jackson2ObjectMapperFactory());
     }
 
     /**
