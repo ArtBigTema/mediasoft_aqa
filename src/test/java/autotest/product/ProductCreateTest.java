@@ -98,9 +98,9 @@ public class ProductCreateTest extends AuthTestCase {
         );
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     @Tag("update")
+    @SuppressWarnings("unchecked")
     @DisplayName("Валидация изменения созданного продукта")
     public void testSimpleUpdateProductPositive() {
         Product product = createProductWithCategory(AUTO_TEST_CATEGORY);
@@ -130,8 +130,10 @@ public class ProductCreateTest extends AuthTestCase {
 
             now = Utils.FORMAT.format(LocalDateTime.now());
             Utils.safetyTake(() -> Thread.sleep(MAX_TIMEOUT));
+
             Allure.step("check patch created product" + id + " field: " + pair);
             result.put(pair.getKey(), pair.getValue());
+
             execute(PRODUCT_ENDPOINT + id, HttpStatus.OK.value(), Method.PATCH, result);
             Map<?, ?> data = get(PRODUCT_ENDPOINT + id)
                     .body("data." + Product.Fields.insertedAt, Matchers.equalTo(result.get(Product.Fields.insertedAt)))
@@ -142,7 +144,6 @@ public class ProductCreateTest extends AuthTestCase {
             Assertions.assertNotEquals(prev.get(pair.getKey()), data.get(pair.getKey()));
             extractAndCheck(id, prev, data, Product.Fields.lastQtyChange, pair.getKey());
         }
-
 
         delete(PRODUCT_ENDPOINT + id, HttpStatus.OK.value());
     }

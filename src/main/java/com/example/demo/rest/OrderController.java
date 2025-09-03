@@ -1,7 +1,7 @@
 package com.example.demo.rest;
 
 import com.example.demo.entity.Order;
-import com.example.demo.rest.common.PositiveResponse;
+import com.example.demo.rest.common.Response.PositiveResponse;
 import com.example.demo.rest.common.crud.CrudController;
 import com.example.demo.service.CrudService;
 import io.swagger.v3.oas.annotations.Hidden;

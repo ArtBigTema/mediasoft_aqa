@@ -2,7 +2,7 @@ package com.example.demo.rest.common.crud;
 
 import com.example.demo.entity.AbstractEntity;
 import com.example.demo.rest.common.Api;
-import com.example.demo.rest.common.PositiveResponse;
+import com.example.demo.rest.common.Response.PositiveResponse;
 import com.example.demo.service.CrudService;
 import com.example.demo.util.Utils;
 import io.swagger.v3.oas.annotations.Parameter;

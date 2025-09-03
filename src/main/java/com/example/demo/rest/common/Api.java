@@ -7,20 +7,20 @@ import java.util.List;
 public class Api {
     public static final String DESCRIPTION = "Данные получены";
 
-    public static <T> PositiveResponse<T> positiveResponse(T data) {
+    public static <T> Response.PositiveResponse<T> positiveResponse(T data) {
         if (data instanceof Iterable<?> iterable) {
-            return new PositiveResponse<>(data, !iterable.iterator().hasNext() ?
+            return new Response.PositiveResponse<>(data, !iterable.iterator().hasNext() ?
                     "Данные пустые" : DESCRIPTION); //todo to constant
         } else {
-            return new PositiveResponse<>(data, DESCRIPTION);
+            return new Response.PositiveResponse<>(data, DESCRIPTION);
         }
     }
 
-    public static <T> PositiveResponse<List<T>> positiveResponse(Page<T> data) {
-        return new PositiveResponse<>(data.getContent(), DESCRIPTION).paged(data);
+    public static <T> Response.PositiveResponse<List<T>> positiveResponse(Page<T> data) {
+        return new Response.PositiveResponse<>(data.getContent(), DESCRIPTION).paged(data);
     }
 
-    public static NegativeResponse<String> negativeResponse(String code, String errorMessage, String desc, Object details) {
-        return new NegativeResponse<>(code, errorMessage, desc, details);
+    public static Response.NegativeResponse<String> negativeResponse(String code, String errorMessage, String desc, Object details) {
+        return new Response.NegativeResponse<>(code, errorMessage, desc, details);
     }
 }
