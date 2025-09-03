@@ -1,6 +1,8 @@
 package autotest.util;
 
 
+import com.example.demo.entity.Order;
+import com.example.demo.entity.OrderedProduct;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jeasy.random.EasyRandom;
@@ -24,6 +26,8 @@ public class Random {
     public static synchronized EasyRandom getInstance() {
         if (instance == null) {
             Set<Class<?>> skipTypes = Set.of(LocalDateTime.class, UUID.class);
+            Set<String > skipNames = Set.of(Order.Fields.orderedProducts);
+
             // Настройка параметров
             EasyRandomParameters parameters = new EasyRandomParameters()
                     .randomizationDepth(3)
@@ -42,7 +46,7 @@ public class Random {
                             return RandomStringUtils.insecure().nextAlphabetic(10);
                         }
                     })
-                    .excludeField(f -> skipTypes.contains(f.getType()));
+                    .excludeField(f -> skipTypes.contains(f.getType()) || skipNames.contains(f.getName()));
 
             instance = new EasyRandom(parameters);
         }

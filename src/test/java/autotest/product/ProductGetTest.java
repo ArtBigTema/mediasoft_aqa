@@ -31,21 +31,19 @@ import static org.apache.commons.lang3.math.NumberUtils.*;
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.hamcrest.Matchers.*;
 
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked","rawtypes"})
 @Tags({@Tag("Product"), @Tag("get")})
 public class ProductGetTest extends AuthTestCase {
     public static List<Object> ids = Collections.emptyList();
     public static final int FIVE = TEN.intValue() / INTEGER_TWO;
-    public static final CollectionLikeType productListType = mapper
-            .getTypeFactory().constructCollectionLikeType(ArrayList.class, Product.class);
 
-    //    @BeforeAll
+     @BeforeAll
     public static void createProducts() {
         ids = Stream.generate(ProductCreateTest::createProduct)
                 .limit(TEN.intValue()).toList();
     }
 
-    //    @AfterAll
+      @AfterAll
     public static void deleteCreatedProducts() {
         ids.forEach(i -> delete(PRODUCT_ENDPOINT + i, HttpStatus.OK.value()));
     }
@@ -119,7 +117,6 @@ public class ProductGetTest extends AuthTestCase {
     }
 
     @Test
-    @SuppressWarnings("rawtypes")
     @Tag("sorting")
     @DisplayName("Простое получение данных о продуктах с сортировкой по каждому полю")
     public void testSimpleGetAllProductsBySort() {

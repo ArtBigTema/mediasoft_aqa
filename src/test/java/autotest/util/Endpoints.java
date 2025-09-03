@@ -6,4 +6,5 @@ import lombok.experimental.UtilityClass;
 public class Endpoints {
     public static final String PRODUCT_ENDPOINT = "products/";
     public static final String ORDER_ENDPOINT = "orders/";
+    public static final String CUSTOMER_ENDPOINT = "customers/";
 }

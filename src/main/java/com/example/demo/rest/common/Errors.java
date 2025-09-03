@@ -10,6 +10,8 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
+import java.util.Objects;
+
 @Getter
 @RequiredArgsConstructor
 public enum Errors {
@@ -40,7 +42,7 @@ public enum Errors {
 
     public <E> E thr(Utils.Supplier<E, Throwable> supplier) {
         try {
-            return supplier.get();
+            return Objects.requireNonNull(supplier.get());
         } catch (CodifiedException e) {
             throw e;
         } catch (Throwable t) {

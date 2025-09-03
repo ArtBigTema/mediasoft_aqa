@@ -1,5 +1,6 @@
 package com.example.demo.entity;
 
+import com.example.demo.service.CrudService;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -64,5 +65,8 @@ public abstract class AbstractEntity implements Serializable {
     @JsonAnyGetter
     public Map<String, Object> getMap() {
         return map;
+    }
+
+    public void onCreate(CrudService crudService){
     }
 }

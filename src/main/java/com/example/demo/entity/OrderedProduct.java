@@ -1,23 +1,33 @@
 package com.example.demo.entity;
 
-import jakarta.persistence.Entity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 import lombok.experimental.FieldNameConstants;
 
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
-import java.util.UUID;
 
 @Data
 @Entity
 @FieldNameConstants
+@Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
 public class OrderedProduct extends AbstractEntity {
     @NotNull
-    private UUID orderId;
+    @ManyToOne
+    @JsonIgnore
+//    @JoinColumn(name="orderId")
+    private Order order;
     @NotNull
-    private UUID productId;
+    @ManyToOne
+//    @JoinColumn(name="productId")
+    @JsonIgnore
+    private Product product;
+
     private BigDecimal qty;
     private BigDecimal price;
 }
