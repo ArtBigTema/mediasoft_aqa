@@ -1,6 +1,7 @@
 package autotest.util;
 
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
@@ -9,7 +10,6 @@ import org.jeasy.random.randomizers.range.BigDecimalRangeRandomizer;
 import org.jeasy.random.randomizers.range.DoubleRangeRandomizer;
 import org.jeasy.random.randomizers.range.IntegerRangeRandomizer;
 import org.jeasy.random.randomizers.range.LongRangeRandomizer;
-import org.jeasy.random.randomizers.text.StringRandomizer;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -30,18 +30,19 @@ public class Random {
                     .stringLengthRange(1, 10)
                     .collectionSizeRange(1, 10)
                     .randomize(BigDecimal.class, new BigDecimalRangeRandomizer(
-                            1.0, 100., NumberUtils.INTEGER_ONE, NumberUtils.INTEGER_TWO, RoundingMode.HALF_UP // rounding mode
+                            1.0, 100., NumberUtils.INTEGER_ONE,
+                            NumberUtils.INTEGER_ONE, RoundingMode.HALF_UP // rounding mode
                     ))
                     .randomize(Long.class, new LongRangeRandomizer(1L, 100_000L))
                     .randomize(Double.class, new DoubleRangeRandomizer(1., 10.))
                     .randomize(Integer.class, new IntegerRangeRandomizer(1, 1000))
-                    .randomize(String.class, new AbstractRandomizer<String >(){
+                    .randomize(String.class, new AbstractRandomizer<String>() {
                         @Override
                         public String getRandomValue() {
-                            return "";
+                            return RandomStringUtils.insecure().nextAlphabetic(10);
                         }
                     })
-                    .excludeField(f-> skipTypes.contains(f.getType()));
+                    .excludeField(f -> skipTypes.contains(f.getType()));
 
             instance = new EasyRandom(parameters);
         }

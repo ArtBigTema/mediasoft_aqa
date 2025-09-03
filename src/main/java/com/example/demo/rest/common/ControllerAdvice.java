@@ -38,7 +38,7 @@ public class ControllerAdvice {
         if (loggable) thr.printStackTrace();
         Throwable cause = Optional.ofNullable(thr.getCause()).orElse(thr);
         return new ResponseEntity<>(Api.negativeResponse(
-                errors.name().substring(1), msg,
+                errors.name().substring(1), msg,errors.getDescription(),
                 ExceptionUtils.getStackTrace(cause)), null, errors.getCode());
     }
 

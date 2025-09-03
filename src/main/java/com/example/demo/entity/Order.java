@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.validator.constraints.Length;
 
 import java.util.List;
 import java.util.UUID;
@@ -25,6 +26,7 @@ public class Order extends AbstractEntity {
     @NotNull
     private UUID customerId;
     @NotBlank
+    @Length(max = 255)
     private String deliveryAddress;
     @NotEmpty
     @Transient

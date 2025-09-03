@@ -20,7 +20,7 @@ public class Api {
         return new PositiveResponse<>(data.getContent(), DESCRIPTION).paged(data);
     }
 
-    public static NegativeResponse<String> negativeResponse(String code, String errorMessage, Object details) {
-        return new NegativeResponse<>(code, errorMessage, "Smth went wrong", details);
+    public static NegativeResponse<String> negativeResponse(String code, String errorMessage, String desc, Object details) {
+        return new NegativeResponse<>(code, errorMessage, desc, details);
     }
 }

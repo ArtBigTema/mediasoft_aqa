@@ -38,8 +38,8 @@ public abstract class AuthTestCase {
     public static String cookie = "";
     public static Jackson2Mapper jacksonMapper;
     public static final ObjectMapper mapper = AnyConfig.objectMapper()
-        .copy().disable(MapperFeature.USE_ANNOTATIONS);
-          //  .enable(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS);
+            .copy().disable(MapperFeature.USE_ANNOTATIONS)
+            .enable(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS);
 
     @BeforeAll
     public static void auth() {
@@ -125,6 +125,16 @@ public abstract class AuthTestCase {
      */
     public static ValidatableResponse post(String url, Object body) {
         return execute(url, 201, Method.POST, body);
+    }
+
+    public static ValidatableResponse post(String url, Object body, Errors errors) {
+        return execute(url, errors.getCode(), Method.POST, body)
+                .body(Constant.RESULT_FIELD, equalTo(Boolean.FALSE))
+                .body(Constant.CODE_FIELD, equalTo(errors.name().substring(INTEGER_ONE)))
+                .body(Constant.DESCRIPTION_FIELD, Matchers.anyOf(
+                        Matchers.matchesRegex(errors.toRegexp()),
+                        containsString(errors.getDescription()))
+                );
     }
 
     /**

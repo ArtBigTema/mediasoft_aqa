@@ -16,14 +16,12 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.*;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static autotest.product.ProductCreateTest.createProduct;
 import static autotest.product.ProductCreateTest.createProductWithCategory;
 import static autotest.util.Constant.*;
 import static autotest.util.Endpoints.PRODUCT_ENDPOINT;
@@ -153,7 +151,7 @@ public class ProductGetTest extends AuthTestCase {
     @DisplayName("Простое получение данных о продуктах с сортировкой по каждому полю")
     public void testSimpleGetAllProductsByFilter() {
         Product product = createProductWithCategory(AUTO_TEST_CATEGORY);
-        Map response =  MapUtils.getMap(post(PRODUCT_ENDPOINT, product)
+        Map response = MapUtils.getMap(post(PRODUCT_ENDPOINT, product)
                 .extract().body().as(Map.class), DATA_FIELD);
         Map map = getWithParams(PRODUCT_ENDPOINT, response)
                 .extract().jsonPath().getList(DATA_FIELD, Map.class).getFirst();
@@ -164,15 +162,15 @@ public class ProductGetTest extends AuthTestCase {
                 Maps.transformValues(map, String::valueOf).entrySet()
         );
         for (Object key : response.keySet()) {
-             map = Map.of(key, response.get(key));
+            map = Map.of(key, response.get(key));
 
-            Allure.step("check filter by single field and full value: "+map);
+            Allure.step("check filter by single field and full value: " + map);
             getWithParams(PRODUCT_ENDPOINT, map)
                     .body(DATA_FIELD, Matchers.iterableWithSize(greaterThanOrEqualTo(INTEGER_ONE)))
                     .body("pagingResults.totalCount", greaterThanOrEqualTo(INTEGER_ONE))
                     .body("data", hasItem(hasEntry("id", response.get("id"))));
         }
-        delete(PRODUCT_ENDPOINT+response.get("id"), SC_OK);
+        delete(PRODUCT_ENDPOINT + response.get("id"), SC_OK);
     }
 
 }

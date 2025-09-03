@@ -2,6 +2,7 @@ package com.example.demo.util;
 
 import com.example.demo.entity.AbstractEntity;
 import com.example.demo.rest.common.Errors;
+import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonValueFormat;
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.Sets;
 import lombok.experimental.UtilityClass;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.Sort;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
@@ -26,6 +28,8 @@ import static java.util.Collections.emptySet;
 
 @UtilityClass
 public class Utils {
+    public static final String ISO_DATE_TIME = "yyyy-MM-dd'T'HH:mm:ss";
+    public static final DateTimeFormatter FORMAT = DateTimeFormatter.ofPattern(ISO_DATE_TIME);
     public static final String PAGE_PARAMETER = "page";
     public static final String SIZE_PARAMETER = "size";
     public static final String SORT_PARAMETER = "sort";
@@ -65,6 +69,12 @@ public class Utils {
             return getter.get();
         } catch (Throwable e) {
             return null;
+        }
+    }
+    public static <T> void safetyTake(Runnable<Exception> getter) {
+        try {
+             getter.run();
+        } catch (Throwable e) {
         }
     }
 

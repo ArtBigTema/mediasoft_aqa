@@ -4,6 +4,7 @@
 
 #Maven
 target
+allure-results
 
 #Gradle
 .gradle
