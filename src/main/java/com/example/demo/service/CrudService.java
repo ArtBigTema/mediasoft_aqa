@@ -44,8 +44,7 @@ public class CrudService {
         Iterable<E> i = find(clazz, id);
         Map<UUID, E> index = StreamSupport.stream(i.spliterator(), false)
                 .collect(Collectors.toMap(AbstractEntity::getId, Function.identity()));
-        Errors.E404.thr(index.keySet().containsAll(id));
-        Errors.E404.thr(id.containsAll(index.keySet()));
+        Errors.E404.thr(index.keySet().equals(id));
         return index;
     }
 

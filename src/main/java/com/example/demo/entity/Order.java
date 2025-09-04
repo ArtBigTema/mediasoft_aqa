@@ -1,5 +1,6 @@
 package com.example.demo.entity;
 
+import com.example.demo.rest.common.Errors;
 import com.example.demo.service.CrudService;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
@@ -12,6 +13,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldNameConstants;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.hibernate.validator.constraints.Length;
 
 import java.math.BigDecimal;
@@ -58,10 +60,19 @@ public class Order extends AbstractEntity {
         Map<UUID, Product> productMap = crudService.findAll(Product.class, productIds);
 
         List<OrderedProduct> productList = products
-                .stream().map(p -> new OrderedProduct()
-                .setOrder(this).setQty(p.getQty())
-                .setPrice(p.getQty().multiply(productMap.get(p.getId()).getPrice()))
-                .setProduct(productMap.get(p.getId()))).toList();
+                .stream().map(p -> {
+                    OrderedProduct o = new OrderedProduct();
+                    o.setOrder(this);
+                    o.setQty(p.getQty());
+                    Product product = productMap.get(p.getId());
+                    Errors.E506.thr(product.getIsAvailable());
+                    product.setQty(product.getQty().subtract(p.getQty()));
+                    Errors.E505.thrIf(product.getQty().compareTo(BigDecimal.ZERO) < NumberUtils.INTEGER_ZERO);
+                    o.setPrice(p.getQty().multiply(product.getPrice()));
+                    o.setProduct(product);
+                    return o;
+                }).toList();
+
         setOrderedProducts(productList);
     }
 
