@@ -1,6 +1,7 @@
 #Allure
 .allure
 /*/allure-results/
+/allure-results/
 
 #Maven
 target
